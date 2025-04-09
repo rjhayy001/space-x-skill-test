@@ -34,20 +34,30 @@ function App() {
     try {
       setLoading(true);
       const currentPage = reset ? 1 : page;
-      const response = await fetch(`https://api.spacexdata.com/v3/launches?limit=10&offset=${(currentPage - 1) * 10}`);
+  
+      const limit = searchQuery ? 1000 : 10;
+      const offset = searchQuery ? 0 : (currentPage - 1) * 10;
+  
+      const response = await fetch(
+        `https://api.spacexdata.com/v3/launches?limit=${limit}&offset=${offset}`
+      );
       const data = await response.json();
-      console.log(data, 'test')
-      
-      if (data.length < 10) {
-        setHasMore(false);
-      }
-      
-      const filteredData = data.filter((launch: Launch) => 
+  
+      const filteredData = data.filter((launch: Launch) =>
         launch.mission_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (launch.details?.toLowerCase() || '').includes(searchQuery.toLowerCase())
       );
 
-      setLaunches(prevLaunches => reset ? filteredData : [...prevLaunches, ...filteredData]);
+      console.log(filteredData)
+  
+      if (filteredData.length < 10) {
+        setHasMore(false);
+      }
+  
+      setLaunches(prevLaunches =>
+        reset ? filteredData : [...prevLaunches, ...filteredData]
+      );
+  
       setPage(prevPage => reset ? 2 : prevPage + 1);
     } catch (error) {
       console.error('Error fetching launches:', error);
@@ -55,14 +65,15 @@ function App() {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     fetchLaunches(true);
   }, [searchQuery]);
 
   const handleSearch = (value: string) => {
-    setSearchQuery(value);
     setHasMore(true);
+    setSearchQuery(value);
   };
 
   const toggleDetails = (flightNumber: number) => {
@@ -88,13 +99,14 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto mb-10">
+        <div className=' sticky top-0 bg-white p-2 z-10 rounded'>
         <div className="flex items-center gap-3 mb-8">
           <Rocket size={32} className="text-blue-500" />
           <Title level={2} style={{ margin: 0 }}>SpaceX Launches</Title>
         </div>
 
-        <div className="mb-6">
+        <div className="mb-6 ">
           <AntSearch
             placeholder="Search launches by mission name or details..."
             allowClear
@@ -103,6 +115,7 @@ function App() {
             onChange={e => handleSearch(e.target.value)}
             className="max-w-full"
           />
+        </div>
         </div>
 
         {loading && launches.length === 0 ? (
@@ -129,7 +142,7 @@ function App() {
               </div>
             }
           >
-            <div className="space-y-4">
+            <div className="space-y-4 mt-5">
               {launches.map((launch) => {
                 const status = getLaunchStatus(launch);
                 return (
