@@ -146,43 +146,45 @@ function App() {
                                 className="relative top-[2px]"
                               />
                             </div>
-                            <div className='flex gap-2'>
-                              <Text type="secondary" className="block mb-2">
-                                {moment(launch.launch_date_utc).fromNow()} |
-                              </Text>
-                              <Breadcrumb
-                                  separator="|"
-                                  items={[
-                                    ...(launch.links.video_link ? [{
-                                      title: (
-                                        <a
-                                        href={launch.links.video_link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex items-center gap-1 text-blue-500 hover:text-blue-700 underline"
-                                      >
-                                        Video
-                                      </a>
-                                      ),
-                                    }] : []),
-                                    ...(launch.links.article_link ? [{
-                                      title: (
-                                        <a 
-                                          href={launch.links.article_link} 
-                                          target="_blank" 
-                                          rel="noopener noreferrer"
-                                          className="flex items-center gap-1 text-blue-500 hover:text-blue-700 underline"
-                                        >
-                                          Article
-                                        </a>
-                                      ),
-                                    }] : []),
-                                  ]}
-                                />
-                            </div>
+                           
                         </div>
                       </div>
                       {expandedLaunches.includes(launch.flight_number) && (
+                        <>
+                         <div className='flex gap-2'>
+                         <Text type="secondary" className="block mb-2">
+                           {moment(launch.launch_date_utc).fromNow()} |
+                         </Text>
+                         <Breadcrumb
+                             separator="|"
+                             items={[
+                               ...(launch.links.video_link ? [{
+                                 title: (
+                                   <a
+                                   href={launch.links.video_link}
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   className="flex items-center gap-1 text-blue-500 hover:text-blue-700 underline"
+                                 >
+                                   Video
+                                 </a>
+                                 ),
+                               }] : []),
+                               ...(launch.links.article_link ? [{
+                                 title: (
+                                   <a 
+                                     href={launch.links.article_link} 
+                                     target="_blank" 
+                                     rel="noopener noreferrer"
+                                     className="flex items-center gap-1 text-blue-500 hover:text-blue-700 underline"
+                                   >
+                                     Article
+                                   </a>
+                                 ),
+                               }] : []),
+                             ]}
+                           />
+                        </div>
                         <div className="mt-4 pt-4 flex gap-6 items-center">
                             {launch.links.mission_patch && (
                               <img 
@@ -193,6 +195,7 @@ function App() {
                             )}
                           <Text>{launch.details || 'No details available'}</Text>
                         </div>
+                        </>
                       )}
                       <Button 
                           onClick={() => toggleDetails(launch.flight_number)}
